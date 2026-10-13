@@ -1,7 +1,7 @@
 import {defineApi, defineEndpoint, HttpMethod, HttpStatus} from '@rest-vir/api';
 
 /** The port the backend listens on. The frontend dev server proxies the stream to it. */
-export const backendPort = 3000;
+export const backendPort = 5390;
 
 /**
  * A never-ending binary stream of H.264 frames from the camera, each prefixed with a header from

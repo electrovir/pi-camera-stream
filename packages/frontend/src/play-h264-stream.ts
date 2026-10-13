@@ -17,9 +17,12 @@ import {
 export async function playH264Stream({
     canvas,
     abortSignal,
+    readRotation,
 }: Readonly<{
     canvas: HTMLCanvasElement;
     abortSignal: AbortSignal;
+    /** Clockwise degrees. Read for every frame, so rotation changes apply without reconnecting. */
+    readRotation: () => number;
 }>) {
     const context = assertWrap.isDefined(canvas.getContext('2d'));
 
@@ -29,6 +32,7 @@ export async function playH264Stream({
                 canvas,
                 context,
                 abortSignal,
+                readRotation,
             });
         } catch {
             /** Network and decoder errors are handled by reconnecting below. */
@@ -44,19 +48,29 @@ async function playUntilDisconnected({
     canvas,
     context,
     abortSignal,
+    readRotation,
 }: Readonly<{
     canvas: HTMLCanvasElement;
     context: CanvasRenderingContext2D;
     abortSignal: AbortSignal;
+    readRotation: () => number;
 }>) {
     const decoder = new VideoDecoder({
         output(frame) {
-            if (canvas.width !== frame.displayWidth || canvas.height !== frame.displayHeight) {
-                canvas.width = frame.displayWidth;
-                canvas.height = frame.displayHeight;
+            const rotation = readRotation();
+            const isSideways = rotation % 180 !== 0;
+            const width = isSideways ? frame.displayHeight : frame.displayWidth;
+            const height = isSideways ? frame.displayWidth : frame.displayHeight;
+
+            if (canvas.width !== width || canvas.height !== height) {
+                canvas.width = width;
+                canvas.height = height;
             }
 
-            context.drawImage(frame, 0, 0);
+            context.setTransform(
+                new DOMMatrix().translateSelf(width / 2, height / 2).rotateSelf(rotation),
+            );
+            context.drawImage(frame, -frame.displayWidth / 2, -frame.displayHeight / 2);
             frame.close();
         },
         error() {

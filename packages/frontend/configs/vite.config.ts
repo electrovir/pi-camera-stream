@@ -15,6 +15,9 @@ export default defineConfig(
             ...baseConfig,
             server: {
                 ...baseConfig.server,
+                port: 5391,
+                /** Fail instead of silently moving to another port, so the page's URL never changes. */
+                strictPort: true,
                 proxy: {
                     [streamEndpoint.path]: {
                         target: `${backendProtocol}://localhost:${backendPort}`,

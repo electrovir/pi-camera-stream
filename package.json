@@ -1,0 +1,63 @@
+{
+    "name": "pi-camera-stream",
+    "private": true,
+    "homepage": "https://github.com/electrovir/pi-camera-stream",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/electrovir/pi-camera-stream.git"
+    },
+    "license": "(MIT OR CC0-1.0)",
+    "author": {
+        "name": "electrovir",
+        "url": "https://github.com/electrovir"
+    },
+    "sideEffects": false,
+    "type": "module",
+    "workspaces": [
+        "packages/*"
+    ],
+    "scripts": {
+        "compile": "virmator compile",
+        "format": "virmator format",
+        "lint": "virmator lint fix",
+        "start": "runstorm --names backend,frontend \"npm start --workspace @pi-camera-stream/backend\" \"npm start --workspace @pi-camera-stream/frontend\"",
+        "test": "npm run compile && mono-vir for-each-async npm run test",
+        "test:all": "npm run test && runstorm --names spelling,format,deps,lint \"npm run test:spelling\" \"npm run test:format\" \"npm run test:deps\" \"npm run test:lint\"",
+        "test:deps": "virmator deps check",
+        "test:format": "virmator format check",
+        "test:lint": "virmator lint",
+        "test:spelling": "virmator spellcheck"
+    },
+    "devDependencies": {
+        "@eslint/js": "10.0.1",
+        "@stylistic/eslint-plugin": "^5.10.0",
+        "@stylistic/eslint-plugin-ts": "^4.4.1",
+        "@typescript-eslint/eslint-plugin": "^8.71.1",
+        "cspell": "^10.3.6",
+        "dependency-cruiser": "^18.5.0",
+        "esbuild": "^0.28.2",
+        "eslint": "^10.12.0",
+        "eslint-config-prettier": "^10.1.8",
+        "eslint-plugin-jsdoc": "^65.2.0",
+        "eslint-plugin-playwright": "^2.12.1",
+        "eslint-plugin-prettier": "^5.5.6",
+        "eslint-plugin-sonarjs": "^4.2.2",
+        "eslint-plugin-unicorn": "^77.0.0",
+        "mono-vir": "^2.5.1",
+        "npm-check-updates": "^23.1.0",
+        "prettier": "3.3.3",
+        "prettier-plugin-interpolated-html-tags": "^2.0.2",
+        "prettier-plugin-jsdoc": "^1.8.1",
+        "prettier-plugin-multiline-arrays": "~4.1.11",
+        "prettier-plugin-organize-imports": "^4.3.0",
+        "prettier-plugin-packagejson": "^3.0.2",
+        "prettier-plugin-sort-json": "^4.2.0",
+        "prettier-plugin-toml": "^3.0.2",
+        "runstorm": "^1.1.0",
+        "typescript-eslint": "^8.71.1",
+        "virmator": "^14.37.2"
+    },
+    "engines": {
+        "node": ">=22"
+    }
+}

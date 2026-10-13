@@ -1,0 +1,26 @@
+{
+    "name": "@pi-camera-stream/frontend",
+    "private": true,
+    "sideEffects": false,
+    "type": "module",
+    "scripts": {
+        "build": "virmator frontend build",
+        "compile": "virmator compile",
+        "start": "virmator frontend",
+        "test": "exit 0",
+        "test:coverage": "exit 0"
+    },
+    "dependencies": {
+        "@augment-vir/assert": "^32.5.0",
+        "@augment-vir/common": "^32.5.0",
+        "@pi-camera-stream/common": "*",
+        "element-vir": "^27.0.2"
+    },
+    "devDependencies": {
+        "typescript": "^6.0.3",
+        "vite": "^8.3.2"
+    },
+    "engines": {
+        "node": ">=22"
+    }
+}

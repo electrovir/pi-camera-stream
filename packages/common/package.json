@@ -1,0 +1,24 @@
+{
+    "name": "@pi-camera-stream/common",
+    "private": true,
+    "sideEffects": false,
+    "type": "module",
+    "main": "src/index.ts",
+    "module": "src/index.ts",
+    "types": "src/index.ts",
+    "scripts": {
+        "compile": "virmator compile",
+        "test": "virmator test node",
+        "test:coverage": "virmator test node coverage"
+    },
+    "dependencies": {
+        "@augment-vir/assert": "^32.5.0",
+        "@rest-vir/api": "^2.3.4"
+    },
+    "devDependencies": {
+        "@augment-vir/test": "^32.5.0"
+    },
+    "engines": {
+        "node": ">=22"
+    }
+}

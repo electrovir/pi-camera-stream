@@ -6,7 +6,7 @@
     "scripts": {
         "build": "virmator frontend build",
         "compile": "virmator compile",
-        "start": "virmator frontend",
+        "start": "NODE_OPTIONS=\"--import tsx\" vite build --config configs/vite.config.ts && NODE_OPTIONS=\"--import tsx\" vite preview --config configs/vite.config.ts",
         "test": "exit 0",
         "test:coverage": "exit 0"
     },

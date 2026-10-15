@@ -26,6 +26,14 @@ export default defineConfig(
                     },
                 },
             },
+            /**
+             * `vite preview` serves the built frontend, which uses far less memory than the dev
+             * server.
+             */
+            preview: {
+                port: 5391,
+                strictPort: true,
+            },
         };
     },
 );

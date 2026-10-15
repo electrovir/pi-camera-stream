@@ -5,7 +5,7 @@
     "type": "module",
     "scripts": {
         "compile": "virmator compile",
-        "start": "tsx --watch --watch-preserve-output src/start-backend.script.ts",
+        "start": "npm run compile && node --conditions=compiled dist/start-backend.script.js",
         "test": "virmator test node"
     },
     "dependencies": {

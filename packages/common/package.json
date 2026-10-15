@@ -3,6 +3,12 @@
     "private": true,
     "sideEffects": false,
     "type": "module",
+    "exports": {
+        ".": {
+            "compiled": "./dist/index.js",
+            "default": "./src/index.ts"
+        }
+    },
     "main": "src/index.ts",
     "module": "src/index.ts",
     "types": "src/index.ts",

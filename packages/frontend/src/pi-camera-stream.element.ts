@@ -1,8 +1,9 @@
 import {assert} from '@augment-vir/assert';
 import {css, defineElement, html, listen, onDomCreated} from 'element-vir';
 import {
+    createSizedIcon,
     LoaderAnimated24Icon,
-    lucideIcons,
+    LucideRotateCwIcon,
     ViraButton,
     ViraColorVariant,
     ViraEmphasis,
@@ -86,9 +87,9 @@ export const PiCameraStream = defineElement()({
                 })}
             ></canvas>
             <${ViraButton.assign({
-                icon: lucideIcons.RotateCw,
+                icon: createSizedIcon(LucideRotateCwIcon, 24),
                 buttonEmphasis: ViraEmphasis.Subtle,
-                buttonSize: ViraSize.Small,
+                buttonSize: ViraSize.Large,
                 color: ViraColorVariant.Neutral,
             })}
                 title="Rotate 90°"

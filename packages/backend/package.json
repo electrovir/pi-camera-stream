@@ -9,17 +9,17 @@
         "test": "virmator test node"
     },
     "dependencies": {
-        "@augment-vir/common": "^32.5.0",
+        "@augment-vir/common": "^32.6.1",
         "@pi-camera-stream/common": "*",
-        "@rest-vir/api": "^2.3.4",
-        "@rest-vir/host": "^2.3.4",
-        "date-vir": "^9.4.0",
+        "@rest-vir/api": "^2.4.1",
+        "@rest-vir/host": "^2.4.1",
+        "date-vir": "^9.4.1",
         "tsx": "^4.23.15"
     },
     "devDependencies": {
-        "@augment-vir/assert": "^32.5.0",
-        "@augment-vir/test": "^32.5.0",
-        "@types/node": "^26.6.4"
+        "@augment-vir/assert": "^32.6.1",
+        "@augment-vir/test": "^32.6.1",
+        "@types/node": "^26.6.5"
     },
     "engines": {
         "node": ">=22"

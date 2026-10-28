@@ -103,12 +103,21 @@ async function playUntilDisconnected({
         () => {
             if (
                 performance.now() - lastFrame.time >
-                convertDuration(stalledStreamTimeout, {milliseconds: true}).milliseconds
+                convertDuration(stalledStreamTimeout, {
+                    milliseconds: true,
+                }).milliseconds
             ) {
                 attemptController.abort();
             }
         },
-        convertDuration({seconds: 1}, {milliseconds: true}).milliseconds,
+        convertDuration(
+            {
+                seconds: 1,
+            },
+            {
+                milliseconds: true,
+            },
+        ).milliseconds,
     );
 
     try {

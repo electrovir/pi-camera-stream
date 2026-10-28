@@ -93,7 +93,14 @@ export class H264Camera {
                 log.error('Camera stopped sending video. Restarting it.');
                 cameraProcess.kill('SIGKILL');
             },
-            convertDuration({seconds: 5}, {milliseconds: true}).milliseconds,
+            convertDuration(
+                {
+                    seconds: 5,
+                },
+                {
+                    milliseconds: true,
+                },
+            ).milliseconds,
         );
 
         cameraProcess.stdout.on('data', (chunk: Buffer) => {

@@ -13,6 +13,7 @@
         "@pi-camera-stream/common": "*",
         "@rest-vir/api": "^2.3.4",
         "@rest-vir/host": "^2.3.4",
+        "date-vir": "^9.4.0",
         "tsx": "^4.23.15"
     },
     "devDependencies": {

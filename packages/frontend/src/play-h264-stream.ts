@@ -8,6 +8,12 @@ import {
     streamEndpoint,
     type AccessUnit,
 } from '@pi-camera-stream/common';
+import {convertDuration, type AnyDuration} from 'date-vir';
+
+/** Long enough to cover the camera starting up and the wait for the first keyframe. */
+const stalledStreamTimeout: AnyDuration = {
+    seconds: 5,
+};
 
 /**
  * Plays the backend's H.264 stream into the given canvas until `abortSignal` fires, reconnecting
@@ -55,8 +61,13 @@ async function playUntilDisconnected({
     abortSignal: AbortSignal;
     readRotation: () => number;
 }>) {
+    const lastFrame = {
+        time: performance.now(),
+    };
+
     const decoder = new VideoDecoder({
         output(frame) {
+            lastFrame.time = performance.now();
             const rotation = readRotation();
             const isSideways = rotation % 180 !== 0;
             const width = isSideways ? frame.displayHeight : frame.displayWidth;
@@ -84,6 +95,22 @@ async function playUntilDisconnected({
      */
     const attemptController = new AbortController();
 
+    /**
+     * A stalled connection (dropped Wi-Fi, a sleeping device, a stuck decoder) can stay open
+     * without ever erroring, so reconnect whenever frames stop being drawn.
+     */
+    const stallCheck = setInterval(
+        () => {
+            if (
+                performance.now() - lastFrame.time >
+                convertDuration(stalledStreamTimeout, {milliseconds: true}).milliseconds
+            ) {
+                attemptController.abort();
+            }
+        },
+        convertDuration({seconds: 1}, {milliseconds: true}).milliseconds,
+    );
+
     try {
         const response = await fetch(streamEndpoint.path, {
             signal: AbortSignal.any([
@@ -106,6 +133,7 @@ async function playUntilDisconnected({
             result.frames.forEach((frame) => decodeFrame(decoder, frame));
         }
     } finally {
+        clearInterval(stallCheck);
         attemptController.abort();
 
         if (decoder.state !== 'closed') {

@@ -2,6 +2,7 @@
 
 import {log} from '@augment-vir/common';
 import {splitAccessUnits, type AccessUnit} from '@pi-camera-stream/common';
+import {convertDuration} from 'date-vir';
 import {spawn, type ChildProcess} from 'node:child_process';
 
 export type CameraSubscriber = {
@@ -82,7 +83,22 @@ export class H264Camera {
             current: new Uint8Array(),
         };
 
+        /**
+         * A hung camera process never exits on its own, so every viewer, including ones that
+         * reconnect, would wait on it forever. `SIGKILL` because a hung process may never handle
+         * `SIGTERM`. The `close` handler restarts it for the attached viewers.
+         */
+        const stallTimer = setTimeout(
+            () => {
+                log.error('Camera stopped sending video. Restarting it.');
+                cameraProcess.kill('SIGKILL');
+            },
+            convertDuration({seconds: 5}, {milliseconds: true}).milliseconds,
+        );
+
         cameraProcess.stdout.on('data', (chunk: Buffer) => {
+            stallTimer.refresh();
+
             const {accessUnits, remainder: newRemainder} = splitAccessUnits(
                 Buffer.concat([
                     remainder.current,
@@ -101,6 +117,7 @@ export class H264Camera {
         });
 
         cameraProcess.on('close', () => {
+            clearTimeout(stallTimer);
             this.cameraProcess = undefined;
 
             if (cameraProcess.killed && this.subscribers.size) {

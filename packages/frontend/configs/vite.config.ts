@@ -23,6 +23,16 @@ export default defineConfig(
                         target: `${backendProtocol}://localhost:${backendPort}`,
                         /** The backend's certificate may be self-signed. */
                         secure: false,
+                        configure(proxy) {
+                            /**
+                             * With an HTTPS target, Vite's proxy keeps the backend request open
+                             * after the viewer disconnects, so the backend keeps streaming to a
+                             * viewer that's gone.
+                             */
+                            proxy.on('proxyReq', (proxyRequest, request, response) => {
+                                response.on('close', () => proxyRequest.destroy());
+                            });
+                        },
                     },
                 },
             },

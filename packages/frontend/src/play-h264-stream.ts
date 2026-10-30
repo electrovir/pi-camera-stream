@@ -15,6 +15,15 @@ const stalledStreamTimeout: AnyDuration = {
     seconds: 5,
 };
 
+const reloadPageTimeoutMilliseconds = convertDuration(
+    {
+        minutes: 1,
+    },
+    {
+        milliseconds: true,
+    },
+).milliseconds;
+
 /**
  * Plays the backend's H.264 stream into the given canvas until `abortSignal` fires, reconnecting
  * whenever the stream drops. Requires an HTTPS page because browsers only expose `VideoDecoder` in
@@ -31,6 +40,9 @@ export async function playH264Stream({
     readRotation: () => number;
 }>) {
     const context = assertWrap.isDefined(canvas.getContext('2d'));
+    const lastFrame = {
+        time: performance.now(),
+    };
 
     while (!abortSignal.aborted) {
         try {
@@ -39,9 +51,19 @@ export async function playH264Stream({
                 context,
                 abortSignal,
                 readRotation,
+                lastFrame,
             });
         } catch {
             /** Network and decoder errors are handled by reconnecting below. */
+        }
+
+        /**
+         * The browser can get stuck failing every reconnect with "Could not connect to the server"
+         * until a page loads.
+         */
+        if (performance.now() - lastFrame.time > reloadPageTimeoutMilliseconds) {
+            globalThis.location.reload();
+            return;
         }
 
         await wait({
@@ -55,15 +77,18 @@ async function playUntilDisconnected({
     context,
     abortSignal,
     readRotation,
+    lastFrame,
 }: Readonly<{
     canvas: HTMLCanvasElement;
     context: CanvasRenderingContext2D;
     abortSignal: AbortSignal;
     readRotation: () => number;
-}>) {
-    const lastFrame = {
-        time: performance.now(),
+    /** Shared across attempts. */
+    lastFrame: {
+        time: number;
     };
+}>) {
+    const attemptStart = performance.now();
 
     const decoder = new VideoDecoder({
         output(frame) {
@@ -102,7 +127,7 @@ async function playUntilDisconnected({
     const stallCheck = setInterval(
         () => {
             if (
-                performance.now() - lastFrame.time >
+                performance.now() - Math.max(lastFrame.time, attemptStart) >
                 convertDuration(stalledStreamTimeout, {
                     milliseconds: true,
                 }).milliseconds
